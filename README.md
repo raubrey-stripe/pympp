@@ -35,7 +35,19 @@ server = Mpp.create(
 @app.get("/paid")
 @server.pay(amount="0.50")
 async def handler(request, credential: Credential, receipt: Receipt):
-    return {"data": "...", "payer": credential.source}
+        return {"data": "...", "payer": credential.source}
+```
+
+If the endpoint already uses `Authorization` (API keys, Bearer tokens), create the server with `requires_auth=True`. Challenges then advertise `header="Payment-Authorization"`, and clients send the Payment credential in that header instead of `Authorization`.
+
+```python
+server = Mpp.create(method=tempo(...), requires_auth=True)
+
+result = await server.charge(
+    authorization=request.headers.get("Authorization"),
+    amount="0.50",
+    payment_authorization=request.headers.get("Payment-Authorization"),
+)
 ```
 
 ### Client
